@@ -1,61 +1,57 @@
-let quizData = [];
-let availableQuestions = [];
-let currentQuestion = {};
-let correctAnswer = "";
+ // Initialize Map
+let map = L.map('map').setView([20, 0], 2);
 
-// Load quiz data
-fetch("quiz_data.json")
-    .then(response => response.json())
-    .then(data => {
-        quizData = [...data];
-        availableQuestions = [...quizData]; // Copy for tracking
-        loadQuestion();
+// Load map tiles (Free OpenStreetMap)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{y}/{x}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Country data variable
+let countries = {};
+let remainingCountries = [];
+let correctCountry = "";
+
+// Fetch country data from JSON
+$.getJSON("quiz_data.json", function(data) {
+    // Map the country data to countries object
+    countries = {};
+    data.forEach(item => {
+        // You might want to include coordinates for each country here
+        // Example: countries["Country Name"] = [latitude, longitude]
+        // For now, just creating an empty object
+        countries[item.country_name] = item.coordinates; // Assuming you add coordinates in JSON
     });
 
-// Load a new question without repetition
-function loadQuestion() {
-    if (availableQuestions.length === 0) {
-        availableQuestions = [...quizData]; // Reset questions when all are asked
+    // Initialize remaining countries
+    remainingCountries = Object.keys(countries);
+    generateQuestion();
+});
+
+// Generate the first question
+function generateQuestion() {
+    if (remainingCountries.length === 0) {
+        document.getElementById('question').innerText = "🎉 Quiz Completed!";
+        return;
     }
 
-    let randomIndex = Math.floor(Math.random() * availableQuestions.length);
-    currentQuestion = availableQuestions.splice(randomIndex, 1)[0]; // Remove asked question
-    correctAnswer = currentQuestion.capital_city;
+    // Pick a random country from remaining
+    let index = Math.floor(Math.random() * remainingCountries.length);
+    correctCountry = remainingCountries[index];  // Correct country to answer
+    document.getElementById('question').innerText = `Where is ${correctCountry}?`;
+}
 
-    document.getElementById("question").innerText = `What is the capital of ${currentQuestion.country_name}?`;
+// Handle clicks
+Object.entries(countries).forEach(([country, coords]) => {
+    let marker = L.marker(coords).addTo(map).bindPopup(country);
 
-    let options = [correctAnswer, ...getWrongAnswers()];
-    options.sort(() => Math.random() - 0.5);
-
-    let buttons = document.querySelectorAll(".option-btn");
-    buttons.forEach((btn, i) => {
-        btn.innerText = options[i];
-        btn.style.background = "white";
-        btn.disabled = false;
+    marker.on('click', function () {
+        if (country === correctCountry) {
+            alert("✅ Correct! Well done.");
+            // Remove the correct country from the remaining questions
+            remainingCountries.splice(remainingCountries.indexOf(correctCountry), 1);
+            setTimeout(generateQuestion, 1000); // Ask a new question after a short delay
+        } else {
+            alert("❌ Wrong! Try again.");
+        }
     });
-
-    document.getElementById("result").innerText = "";
-}
-
-// Get 3 wrong answers
-function getWrongAnswers() {
-    let wrongAnswers = quizData
-        .map(q => q.capital_city)
-        .filter(capital => capital !== correctAnswer);
-    
-    return wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 3);
-}
-
-// Check answer
-function checkAnswer(btn) {
-    if (btn.innerText === correctAnswer) {
-        btn.style.background = "green";
-        document.getElementById("result").innerText = "✅ Correct!";
-        setTimeout(loadQuestion, 2000);
-    } else {
-        btn.style.background = "red";
-        document.getElementById("result").innerText = "❌ Wrong! Try again.";
-    }
-
-    document.querySelectorAll(".option-btn").forEach(button => button.disabled = true);
-}
+});

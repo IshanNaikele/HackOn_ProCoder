@@ -1,8 +1,8 @@
 import pandas as pd
 import json
 
-# Load CSV
-df = pd.read_csv("Quiz app/Data/Countries.csv")
+df = pd.read_csv(r"D:\Ishan\HackOn_ProCoder\Quiz app\Data\Countries.csv")
+
 
 # Select required columns and drop missing values
 df = df[['country_name', 'capital_city']].dropna()
