@@ -1,0 +1,30 @@
+# Backend
+flask
+fastapi
+uvicorn
+
+# Database
+psycopg2
+sqlalchemy
+
+# Data Processing
+pandas
+numpy
+scikit-learn
+
+# Machine Learning
+tensorflow
+torch
+transformers
+
+# Map & Visualization
+folium
+geopandas
+matplotlib
+
+# API Requests & Web Scraping (if needed)
+requests
+beautifulsoup4
+
+# Frontend (if using Streamlit)
+streamlit
