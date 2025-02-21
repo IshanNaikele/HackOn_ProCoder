@@ -3,7 +3,7 @@ import tkinter as tk
 import random
 
 # Load the dataset
-file_path = r"D:\Ishan\HackOn_ProCoder\Quiz app\Data\Countries.csv"
+file_path = r"D:\Ishan\HackOn_ProCoder\Data\Countries.csv"
 data = pd.read_csv(file_path)
 
 # Keep only required columns
@@ -33,10 +33,10 @@ def generate_question():
 
     # End the game after 10 questions
     if question_count >= max_questions:
-        question_label.config(text="🎉 Quiz Over! Well done!", font=("Arial", 18, "bold"))
+        question_label.config(text="🎉 Quiz Over! Well done!", font=("Arial", 18, "bold"), fg="#00BFFF")
         for btn in option_buttons:
             btn.pack_forget()  # Hide answer buttons
-        result_label.config(text=f"You completed {max_questions} questions!", fg="blue")
+        result_label.config(text=f"You completed {max_questions} questions!", fg="#00BFFF", font=("Arial", 16, "bold"))
         return
     
     # Increase question count
@@ -92,27 +92,37 @@ def generate_question():
 # Function to check answer
 def check_answer(answer):
     if answer == correct_answer:
-        result_label.config(text="✅ Correct! Moving to next question...", fg="green")
+        result_label.config(text="✅ Correct! Moving to next question...", fg="green", font=("Arial", 14, "bold"))
     else:
-        result_label.config(text="❌ Wrong! Try again.", fg="red")
+        result_label.config(text="❌ Wrong! Try again.", fg="red", font=("Arial", 14, "bold"))
 
     root.after(2000, generate_question)
 
 # Set up GUI
 root = tk.Tk()
-root.title("Geography Quiz")
+root.title("🌍 Geography Quiz")
+root.geometry("600x400")
+root.configure(bg="#F0F8FF")  # Light blue background
 
-question_label = tk.Label(root, text="", font=("Arial", 16))
-question_label.pack(pady=10)
+# Add header label
+header_label = tk.Label(root, text="🌍 Geography Quiz 🌎", font=("Arial", 24, "bold"), bg="#4682B4", fg="white", padx=20, pady=10)
+header_label.pack(fill="x")
 
+# Question label
+question_label = tk.Label(root, text="", font=("Arial", 16, "bold"), bg="#F0F8FF", fg="#000080", wraplength=500, justify="center")
+question_label.pack(pady=20)
+
+# Option buttons with improved styling
 option_buttons = []
 for _ in range(4):
-    btn = tk.Button(root, text="", font=("Arial", 14), width=20)
+    btn = tk.Button(root, text="", font=("Arial", 14), width=25, height=2, bg="#87CEFA", fg="black", activebackground="#4682B4", activeforeground="white", relief="raised", bd=3)
     btn.pack(pady=5)
     option_buttons.append(btn)
 
-result_label = tk.Label(root, text="", font=("Arial", 14))
+# Result label
+result_label = tk.Label(root, text="", font=("Arial", 14), bg="#F0F8FF", fg="#000080")
 result_label.pack(pady=10)
 
-generate_question()  # Start the first question
+# Start quiz
+generate_question()
 root.mainloop()
