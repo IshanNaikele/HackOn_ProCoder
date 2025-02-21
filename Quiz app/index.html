@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geography Quiz</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Leaflet.js (For Maps) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-</head>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <h1>Geography Quiz</h1>
-    <div id="question"></div>
-    <div id="map" style="height: 400px;"></div>
+    <h1>Geography Quiz - Identify the Country</h1>
+    
+    <!-- Question Display -->
+    <h2 id="question">Where is France?</h2>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
+
+

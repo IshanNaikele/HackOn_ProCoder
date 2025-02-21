@@ -1,55 +1,35 @@
  // Initialize Map
-let map = L.map('map').setView([20, 0], 2);
+let map = L.map('map').setView([20, 0], 2); // Center at World View
 
 // Load map tiles (Free OpenStreetMap)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{y}/{x}.png', {
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Country data variable
-let countries = {};
-let remainingCountries = [];
-let correctCountry = "";
+// Country data
+let countries = {
+    "France": [48.8566, 2.3522],  // Paris
+    "India": [28.6139, 77.2090],  // New Delhi
+    "USA": [38.9072, -77.0369],   // Washington, D.C.
+    "Brazil": [-15.8267, -47.9218], // Brasília
+    "Japan": [35.6895, 139.6917]   // Tokyo
+};
 
-// Fetch country data from JSON
-$.getJSON("quiz_data.json", function(data) {
-    // Map the country data to countries object
-    countries = {};
-    data.forEach(item => {
-        // You might want to include coordinates for each country here
-        // Example: countries["Country Name"] = [latitude, longitude]
-        // For now, just creating an empty object
-        countries[item.country_name] = item.coordinates; // Assuming you add coordinates in JSON
-    });
+// Pick a random country for the quiz
+let countryNames = Object.keys(countries);
+let correctCountry = countryNames[Math.floor(Math.random() * countryNames.length)];
 
-    // Initialize remaining countries
-    remainingCountries = Object.keys(countries);
-    generateQuestion();
-});
+// Update question
+document.getElementById('question').innerText = `Where is ${correctCountry}?`;
 
-// Generate the first question
-function generateQuestion() {
-    if (remainingCountries.length === 0) {
-        document.getElementById('question').innerText = "🎉 Quiz Completed!";
-        return;
-    }
-
-    // Pick a random country from remaining
-    let index = Math.floor(Math.random() * remainingCountries.length);
-    correctCountry = remainingCountries[index];  // Correct country to answer
-    document.getElementById('question').innerText = `Where is ${correctCountry}?`;
-}
-
-// Handle clicks
+// Add clickable country markers
 Object.entries(countries).forEach(([country, coords]) => {
     let marker = L.marker(coords).addTo(map).bindPopup(country);
-
+    
     marker.on('click', function () {
         if (country === correctCountry) {
             alert("✅ Correct! Well done.");
-            // Remove the correct country from the remaining questions
-            remainingCountries.splice(remainingCountries.indexOf(correctCountry), 1);
-            setTimeout(generateQuestion, 1000); // Ask a new question after a short delay
+            location.reload(); // Reload to get a new question
         } else {
             alert("❌ Wrong! Try again.");
         }
